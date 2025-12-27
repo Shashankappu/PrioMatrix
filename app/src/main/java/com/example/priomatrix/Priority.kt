@@ -6,7 +6,19 @@ data class Priority(
     val id: Int,
     val name: String,
     val color: Color
-)
+){
+    companion object {
+        fun fromId(id: Int): Priority {
+            return when (id) {
+                1 -> PRIORITY_ONE
+                2 -> PRIORITY_TWO
+                3 -> PRIORITY_THREE
+                4 -> PRIORITY_FOUR
+                else -> PRIORITY_NONE
+            }
+        }
+    }
+}
 
 val PRIORITY_NONE = Priority(
     0, "None", Color.Gray

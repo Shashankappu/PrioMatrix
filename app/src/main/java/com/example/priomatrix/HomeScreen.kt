@@ -8,35 +8,28 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.priomatrix.ui.DragOverlay
+import kotlin.collections.emptyList
 
 @Composable
 fun HomeScreen(
     onQuadrantClick: (Priority) -> Unit,
+    taskViewModel: TaskViewModel,
     modifier: Modifier = Modifier
 ) {
 
-    var dragState by remember { mutableStateOf(DragState()) }
-
-    var backlogTasks by rememberSaveable { mutableStateOf(list) }   // PRIORITY_NONE
-    var matrixTasks by rememberSaveable {
-        mutableStateOf(
-            mapOf<Priority, List<Task>>(
-                PRIORITY_ONE to emptyList(),
-                PRIORITY_TWO to emptyList(),
-                PRIORITY_THREE to emptyList(),
-                PRIORITY_FOUR to emptyList()
-            )
-        )
-    }
+    val backlogTasks by taskViewModel.backlogTasks.collectAsState(emptyList())
+    val matrixTasks by taskViewModel.matrixTasks.collectAsState()
+    val dragState by taskViewModel.dragState.collectAsState()
 
     Box(
         modifier = modifier
@@ -54,28 +47,10 @@ fun HomeScreen(
                 isDragging = dragState.isDragging,
                 matrixTasks = matrixTasks,
                 onDrop = { priority ->
-                    dragState.task?.let { dragged ->
-                        // 1️⃣ Add task to matrix
-                        matrixTasks = matrixTasks.toMutableMap().apply {
-                            val updated = (this[priority] ?: emptyList()) +
-                                    dragged.copy(priority = priority)
-                            this[priority] = updated
-                        }
-
-                        // 2️⃣ Remove task from bottom list
-                        backlogTasks = backlogTasks.filterNot { it.id == dragged.id }
-                    }
-                    dragState = DragState()
+                    taskViewModel.dropInto(priority)
                 },
                 onTaskRollback = { task ->
-                    // 🔥 ROLLBACK
-                    // remove from matrix
-                    matrixTasks = matrixTasks.toMutableMap().apply {
-                        this[task.priority] = (this[task.priority] ?: emptyList()).filterNot { it.id == task.id }
-                    }
-
-                    // add back to backlog
-                    backlogTasks = backlogTasks + task.copy(priority = PRIORITY_NONE)
+                    taskViewModel.rollbackTask(task)
                 },
                 onQuadrantClick = onQuadrantClick
             )
@@ -86,13 +61,13 @@ fun HomeScreen(
                     .padding(16.dp),
                 tasks = backlogTasks,
                 onDragStart = { task, offset ->
-                    dragState = DragState(task, offset, true)
+                    taskViewModel.startDrag(task, offset)
                 },
                 onDrag = { offset ->
-                    dragState = dragState.copy(position = offset)
+                    taskViewModel.updateDrag(offset)
                 },
                 onDragEnd = {
-                    dragState = dragState.copy(isDragging = false)
+                    taskViewModel.endDrag()
                 }
             )
         }

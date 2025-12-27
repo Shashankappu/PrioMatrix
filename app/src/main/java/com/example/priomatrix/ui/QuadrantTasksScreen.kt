@@ -13,35 +13,24 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.priomatrix.PRIORITY_FOUR
-import com.example.priomatrix.PRIORITY_ONE
-import com.example.priomatrix.PRIORITY_THREE
-import com.example.priomatrix.PRIORITY_TWO
+import com.example.priomatrix.Priority
 import com.example.priomatrix.TaskItem
-import com.example.priomatrix.list
+import com.example.priomatrix.TaskViewModel
 
 @Composable
 fun QuadrantTasksScreen(
     priorityId: Int,
+    taskViewModel: TaskViewModel,
     onBack: () -> Unit
 ) {
-    val priority = remember(priorityId) {
-        listOf(
-            PRIORITY_ONE,
-            PRIORITY_TWO,
-            PRIORITY_THREE,
-            PRIORITY_FOUR
-        ).first { it.id == priorityId }
-    }
-
-    val tasks = remember {
-        // Replace later with ViewModel
-        list.filter { it.priority.id == priorityId }
-    }
+    val matrixTasks by taskViewModel.matrixTasks.collectAsState()
+    val priority = Priority.fromId(priorityId)
+    val tasks = matrixTasks[priority] ?: emptyList()
 
     Column(modifier = Modifier.fillMaxSize()) {
 
