@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,12 +19,15 @@ import androidx.compose.ui.unit.dp
 import com.example.priomatrix.ui.DragOverlay
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    onQuadrantClick: (Priority) -> Unit,
+    modifier: Modifier = Modifier
+) {
 
     var dragState by remember { mutableStateOf(DragState()) }
 
-    var backlogTasks by remember { mutableStateOf(list) }   // PRIORITY_NONE
-    var matrixTasks by remember {
+    var backlogTasks by rememberSaveable { mutableStateOf(list) }   // PRIORITY_NONE
+    var matrixTasks by rememberSaveable {
         mutableStateOf(
             mapOf<Priority, List<Task>>(
                 PRIORITY_ONE to emptyList(),
@@ -72,7 +76,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
                     // add back to backlog
                     backlogTasks = backlogTasks + task.copy(priority = PRIORITY_NONE)
-                }
+                },
+                onQuadrantClick = onQuadrantClick
             )
 
             TaskListView(
