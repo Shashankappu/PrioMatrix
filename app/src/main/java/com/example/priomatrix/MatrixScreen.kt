@@ -2,6 +2,7 @@ package com.example.priomatrix
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,7 +39,8 @@ fun MatrixScreen(
     dragPosition : Offset,
     isDragging : Boolean,
     matrixTasks: Map<Priority, List<Task>>,
-    onDrop: (Priority) -> Unit = {}
+    onDrop: (Priority) -> Unit = {},
+    onTaskRollback: (Task) -> Unit
 ) {
     val boundsMap = remember { mutableStateMapOf<Priority, Rect>() }
 
@@ -54,7 +58,8 @@ fun MatrixScreen(
                     .border(2.dp, Color.Black),
                 priority = PRIORITY_ONE,
                 tasks = matrixTasks[PRIORITY_ONE].orEmpty(),
-                onBoundsReady = { boundsMap[it.first] = it.second }
+                onBoundsReady = { boundsMap[it.first] = it.second },
+                onTaskRollback = onTaskRollback
             )
             MatrixCell(
                 modifier = Modifier
@@ -63,7 +68,8 @@ fun MatrixScreen(
                     .border(2.dp, Color.Black),
                 priority = PRIORITY_TWO,
                 tasks = matrixTasks[PRIORITY_TWO].orEmpty(),
-                onBoundsReady = { boundsMap[it.first] = it.second }
+                onBoundsReady = { boundsMap[it.first] = it.second },
+                onTaskRollback = onTaskRollback
             )
         }
 
@@ -76,7 +82,8 @@ fun MatrixScreen(
                     .border(2.dp, Color.Black),
                 priority = PRIORITY_THREE,
                 tasks = matrixTasks[PRIORITY_THREE].orEmpty(),
-                onBoundsReady = { boundsMap[it.first] = it.second }
+                onBoundsReady = { boundsMap[it.first] = it.second },
+                onTaskRollback = onTaskRollback
             )
 
             MatrixCell(
@@ -86,7 +93,8 @@ fun MatrixScreen(
                     .border(2.dp, Color.Black),
                 priority = PRIORITY_FOUR,
                 tasks = matrixTasks[PRIORITY_FOUR].orEmpty(),
-                onBoundsReady = { boundsMap[it.first] = it.second }
+                onBoundsReady = { boundsMap[it.first] = it.second },
+                onTaskRollback = onTaskRollback
             )
         }
     }
@@ -110,7 +118,8 @@ fun MatrixCell(
     priority: Priority,
     tasks: List<Task>,
     modifier: Modifier,
-    onBoundsReady: (Pair<Priority, Rect>) -> Unit
+    onBoundsReady: (Pair<Priority, Rect>) -> Unit,
+    onTaskRollback: (Task) -> Unit
 ) {
     Box(
         modifier = modifier
@@ -132,16 +141,25 @@ fun MatrixCell(
                 textAlign = TextAlign.Center
             )
         }
-        Column(
+        LazyColumn(
             modifier = Modifier.padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            tasks.forEach { task ->
+            itemsIndexed(
+                items = tasks,
+                key = { _, task -> task.id }
+            ) { index, task ->
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(40.dp)
-                        .background(task.priority.color, RoundedCornerShape(8.dp)),
+                        .background(task.priority.color, RoundedCornerShape(8.dp))
+                        .combinedClickable(
+                            onClick = {},
+                            onDoubleClick = {
+                                onTaskRollback(task)   // 🔥
+                            }
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(task.id.toString(), color = Color.White)
