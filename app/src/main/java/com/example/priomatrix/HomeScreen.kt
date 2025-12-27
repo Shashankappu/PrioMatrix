@@ -49,7 +49,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 dragPosition = dragState.position,
                 isDragging = dragState.isDragging,
                 matrixTasks = matrixTasks,
-            onDrop = { priority ->
+                onDrop = { priority ->
                     dragState.task?.let { dragged ->
                         // 1️⃣ Add task to matrix
                         matrixTasks = matrixTasks.toMutableMap().apply {
@@ -63,13 +63,11 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     }
                     dragState = DragState()
                 },
-                onTaskRollback = {
-                        task ->   // 🔥 ROLLBACK
+                onTaskRollback = { task ->
+                    // 🔥 ROLLBACK
                     // remove from matrix
                     matrixTasks = matrixTasks.toMutableMap().apply {
-                        this[task.priority] =
-                            (this[task.priority] ?: emptyList())
-                                .filterNot { it.id == task.id }
+                        this[task.priority] = (this[task.priority] ?: emptyList()).filterNot { it.id == task.id }
                     }
 
                     // add back to backlog

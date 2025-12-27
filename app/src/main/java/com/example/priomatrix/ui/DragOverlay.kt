@@ -20,17 +20,17 @@ fun DragOverlay(dragState: DragState) {
     val task = dragState.task ?: return
     if (!dragState.isDragging) return
 
-    val half = 40.dp
+    val actualItemSize = 80.dp
 
     Box(
         modifier = Modifier
             .offset {
                 IntOffset(
-                    (dragState.position.x - half.toPx()).toInt(),
-                    (dragState.position.y - half.toPx()).toInt()
+                    (dragState.position.x - actualItemSize.toPx()).toInt(),
+                    (dragState.position.y - actualItemSize.toPx()).toInt()
                 )
             }
-            .size(80.dp)
+            .size(actualItemSize)
             .background(task.priority.color, RoundedCornerShape(8.dp)),
         contentAlignment = Alignment.Center
     ) {
