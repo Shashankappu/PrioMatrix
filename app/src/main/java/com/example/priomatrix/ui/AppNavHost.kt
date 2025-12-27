@@ -2,12 +2,14 @@ package com.example.priomatrix.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.priomatrix.HomeScreen
+import com.example.priomatrix.TaskViewModel
 
 @Composable
 fun  AppNavHost(
@@ -15,6 +17,7 @@ fun  AppNavHost(
     modifier: Modifier = Modifier
 ){
 
+    val taskViewModel: TaskViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = Screen.Home.route,
@@ -23,6 +26,7 @@ fun  AppNavHost(
         composable(Screen.Home.route) {
             HomeScreen(
                 modifier = modifier,
+                taskViewModel = taskViewModel,
                 onQuadrantClick = { priority ->
                     navController.navigate(
                         Screen.Quadrant.createRoute(priority.id)
@@ -41,6 +45,7 @@ fun  AppNavHost(
 
             QuadrantTasksScreen(
                 priorityId = priorityId,
+                taskViewModel = taskViewModel,
                 onBack = { navController.popBackStack() }
             )
         }
