@@ -15,6 +15,7 @@ val PRIORITY_NONE = Priority(
 val PRIORITY_ONE = Priority(
     1, "Urgent and Important", Color.Red
 )
+
 val PRIORITY_TWO = Priority(
     2, "Urgent but Not Important", Color.Yellow
 )

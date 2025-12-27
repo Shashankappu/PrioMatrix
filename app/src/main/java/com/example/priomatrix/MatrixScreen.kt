@@ -153,7 +153,7 @@ fun MatrixCell(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(40.dp)
-                        .background(task.priority.color, RoundedCornerShape(8.dp))
+                        .background(task.priority.color.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
                         .combinedClickable(
                             onClick = {},
                             onDoubleClick = {
