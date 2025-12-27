@@ -21,7 +21,6 @@ import com.example.priomatrix.ui.DragOverlay
 fun HomeScreen(modifier: Modifier = Modifier) {
 
     var dragState by remember { mutableStateOf(DragState()) }
-    var tasks by remember { mutableStateOf(list) }
 
     var backlogTasks by remember { mutableStateOf(list) }   // PRIORITY_NONE
     var matrixTasks by remember {
@@ -60,9 +59,21 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                         }
 
                         // 2️⃣ Remove task from bottom list
-                        tasks = tasks.filterNot { it.id == dragged.id }
+                        backlogTasks = backlogTasks.filterNot { it.id == dragged.id }
                     }
                     dragState = DragState()
+                },
+                onTaskRollback = {
+                        task ->   // 🔥 ROLLBACK
+                    // remove from matrix
+                    matrixTasks = matrixTasks.toMutableMap().apply {
+                        this[task.priority] =
+                            (this[task.priority] ?: emptyList())
+                                .filterNot { it.id == task.id }
+                    }
+
+                    // add back to backlog
+                    backlogTasks = backlogTasks + task.copy(priority = PRIORITY_NONE)
                 }
             )
 
@@ -70,7 +81,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp),
-                tasks = tasks,
+                tasks = backlogTasks,
                 onDragStart = { task, offset ->
                     dragState = DragState(task, offset, true)
                 },
