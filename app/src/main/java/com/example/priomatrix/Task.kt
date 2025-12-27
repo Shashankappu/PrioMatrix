@@ -14,7 +14,7 @@ val list = listOf(
         1, "Task 1",
         description = "Some Bug in Home Screen",
         priority = PRIORITY_NONE,
-        isCompleted = false,
+        isCompleted = true,
     ),
     Task(
         2, "Task 2",
@@ -38,6 +38,6 @@ val list = listOf(
         5, "Task 5",
         description = "Some Bug in Video",
         priority = PRIORITY_NONE,
-        isCompleted = false,
+        isCompleted = true,
     ),
 )

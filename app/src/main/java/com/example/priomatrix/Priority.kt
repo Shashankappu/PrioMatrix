@@ -21,22 +21,22 @@ data class Priority(
 }
 
 val PRIORITY_NONE = Priority(
-    0, "None", Color.Gray
+    0, "None", Color.White
 )
 
 val PRIORITY_ONE = Priority(
-    1, "Urgent and Important", Color.Red
+    1, "Urgent and Important", Color(0xFFC62828).copy(0.5f)
 )
 
 val PRIORITY_TWO = Priority(
-    2, "Urgent but Not Important", Color.Yellow
+    2, "Urgent but Not Important", Color(0xFFFF8F00).copy(0.5f)
 )
 
 val PRIORITY_THREE = Priority(
-    3, "Not Urgent but Important", Color.Magenta
+    3, "Not Urgent but Important", Color.Yellow.copy(0.5f)
 )
 
 val PRIORITY_FOUR = Priority(
-    4, "Not Urgent and Not Important", Color.White
+    4, "Not Urgent and Not Important", Color.DarkGray.copy(0.5f)
 )
 
