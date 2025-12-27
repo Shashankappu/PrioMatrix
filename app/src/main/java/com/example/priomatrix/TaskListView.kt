@@ -103,7 +103,15 @@ fun TaskItem(
                 .clip(RoundedCornerShape(8.dp))
                 .background(task.priority.color),
             contentAlignment = Alignment.Center,
-        ){}
+        ){
+            if(task.isCompleted){
+                Text(
+                    text = "✔",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.White,
+                )
+            }
+        }
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween,

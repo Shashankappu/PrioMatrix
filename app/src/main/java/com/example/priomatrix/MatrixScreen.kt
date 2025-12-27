@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -139,6 +141,7 @@ fun MatrixCell(
 ) {
     Box(
         modifier = modifier
+            .background(priority.color)
             .onGloballyPositioned { coords ->
                 onBoundsReady(priority to coords.boundsInRoot())
             },
@@ -147,7 +150,6 @@ fun MatrixCell(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .alpha(0.3f)
                 .rotate(-45f)
                 .clickable{
                     onQuadrantClick()
@@ -157,6 +159,7 @@ fun MatrixCell(
             Text(
                 text = priority.name,
                 style = MaterialTheme.typography.bodyMedium,
+                color = Color.Black,
                 textAlign = TextAlign.Center
             )
         }
@@ -172,18 +175,18 @@ fun MatrixCell(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(40.dp)
-                        .background(task.priority.color.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
+                        .background(Color.White.copy(0.3f), RoundedCornerShape(8.dp))
                         .combinedClickable(
                             onClick = {
                                 onQuadrantClick()
                             },
                             onDoubleClick = {
-                                onTaskRollback(task)   // 🔥
+                                onTaskRollback(task)
                             }
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(task.id.toString(), color = Color.White)
+                    Text(task.id.toString(), color = Color.Black)
                 }
             }
         }
