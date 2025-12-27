@@ -86,7 +86,7 @@ fun TaskListView(
 fun TaskItem(
     task: Task,
     modifier: Modifier = Modifier,
-    onPositioned: (Offset) -> Unit
+    onPositioned: (Offset) -> Unit = {}
 ) {
     Row(
         modifier = modifier

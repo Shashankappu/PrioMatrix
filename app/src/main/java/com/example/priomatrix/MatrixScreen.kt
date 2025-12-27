@@ -2,6 +2,7 @@ package com.example.priomatrix
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,6 +41,7 @@ fun MatrixScreen(
     isDragging : Boolean,
     matrixTasks: Map<Priority, List<Task>>,
     onDrop: (Priority) -> Unit = {},
+    onQuadrantClick: (Priority) -> Unit,
     onTaskRollback: (Task) -> Unit
 ) {
     val boundsMap = remember { mutableStateMapOf<Priority, Rect>() }
@@ -59,7 +61,10 @@ fun MatrixScreen(
                 priority = PRIORITY_ONE,
                 tasks = matrixTasks[PRIORITY_ONE].orEmpty(),
                 onBoundsReady = { boundsMap[it.first] = it.second },
-                onTaskRollback = onTaskRollback
+                onTaskRollback = onTaskRollback,
+                onQuadrantClick = {
+                    onQuadrantClick(PRIORITY_ONE)
+                }
             )
             MatrixCell(
                 modifier = Modifier
@@ -69,7 +74,10 @@ fun MatrixScreen(
                 priority = PRIORITY_TWO,
                 tasks = matrixTasks[PRIORITY_TWO].orEmpty(),
                 onBoundsReady = { boundsMap[it.first] = it.second },
-                onTaskRollback = onTaskRollback
+                onTaskRollback = onTaskRollback,
+                onQuadrantClick = {
+                    onQuadrantClick(PRIORITY_TWO)
+                }
             )
         }
 
@@ -83,7 +91,10 @@ fun MatrixScreen(
                 priority = PRIORITY_THREE,
                 tasks = matrixTasks[PRIORITY_THREE].orEmpty(),
                 onBoundsReady = { boundsMap[it.first] = it.second },
-                onTaskRollback = onTaskRollback
+                onTaskRollback = onTaskRollback,
+                onQuadrantClick = {
+                    onQuadrantClick(PRIORITY_THREE)
+                }
             )
 
             MatrixCell(
@@ -94,7 +105,10 @@ fun MatrixScreen(
                 priority = PRIORITY_FOUR,
                 tasks = matrixTasks[PRIORITY_FOUR].orEmpty(),
                 onBoundsReady = { boundsMap[it.first] = it.second },
-                onTaskRollback = onTaskRollback
+                onTaskRollback = onTaskRollback,
+                onQuadrantClick = {
+                    onQuadrantClick(PRIORITY_FOUR)
+                }
             )
         }
     }
@@ -119,7 +133,8 @@ fun MatrixCell(
     tasks: List<Task>,
     modifier: Modifier,
     onBoundsReady: (Pair<Priority, Rect>) -> Unit,
-    onTaskRollback: (Task) -> Unit
+    onTaskRollback: (Task) -> Unit,
+    onQuadrantClick: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -132,7 +147,10 @@ fun MatrixCell(
             modifier = Modifier
                 .fillMaxSize()
                 .alpha(0.3f)
-                .rotate(-45f),
+                .rotate(-45f)
+                .clickable{
+                    onQuadrantClick()
+                },
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -155,7 +173,9 @@ fun MatrixCell(
                         .height(40.dp)
                         .background(task.priority.color.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
                         .combinedClickable(
-                            onClick = {},
+                            onClick = {
+                                onQuadrantClick()
+                            },
                             onDoubleClick = {
                                 onTaskRollback(task)   // 🔥
                             }
