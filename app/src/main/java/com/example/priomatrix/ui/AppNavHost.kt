@@ -1,5 +1,6 @@
 package com.example.priomatrix.ui
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -25,7 +26,7 @@ fun  AppNavHost(
     ){
         composable(Screen.Home.route) {
             HomeScreen(
-                modifier = modifier,
+                modifier = Modifier.fillMaxSize(),
                 taskViewModel = taskViewModel,
                 onQuadrantClick = { priority ->
                     navController.navigate(
