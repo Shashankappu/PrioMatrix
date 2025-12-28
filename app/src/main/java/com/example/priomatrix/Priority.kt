@@ -1,6 +1,11 @@
 package com.example.priomatrix
 
 import androidx.compose.ui.graphics.Color
+import com.example.priomatrix.ui.theme.PriorityFourBg
+import com.example.priomatrix.ui.theme.PriorityNoneBg
+import com.example.priomatrix.ui.theme.PriorityOneBg
+import com.example.priomatrix.ui.theme.PriorityThreeBg
+import com.example.priomatrix.ui.theme.PriorityTwoBg
 
 data class Priority(
     val id: Int,
@@ -21,22 +26,32 @@ data class Priority(
 }
 
 val PRIORITY_NONE = Priority(
-    0, "None", Color.White
+    id = 0,
+    name = "Unassigned",
+    color = PriorityNoneBg // or existing gray mapping
 )
 
 val PRIORITY_ONE = Priority(
-    1, "Urgent and Important", Color(0xFFC62828).copy(0.5f)
+    id = 1,
+    name = "Do Now",
+    color = PriorityOneBg
 )
 
 val PRIORITY_TWO = Priority(
-    2, "Urgent but Not Important", Color(0xFFFF8F00).copy(0.5f)
+    id = 2,
+    name = "Schedule",
+    color = PriorityTwoBg
 )
 
 val PRIORITY_THREE = Priority(
-    3, "Not Urgent but Important", Color.Yellow.copy(0.5f)
+    id = 3,
+    name = "Delegate",
+    color = PriorityThreeBg
 )
 
 val PRIORITY_FOUR = Priority(
-    4, "Not Urgent and Not Important", Color.DarkGray.copy(0.5f)
+    id = 4,
+    name = "Eliminate",
+    color = PriorityFourBg
 )
 
