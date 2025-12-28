@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -164,11 +165,21 @@ fun MatrixCell(
             )
         }
 
+        // Remember list state
+        val listState = rememberLazyListState()
+
+        // Scroll to top whenever the tasks list changes
+        LaunchedEffect(tasks) {
+            if (tasks.isNotEmpty()) {
+                listState.animateScrollToItem(0)
+            }
+        }
         // Task list
         LazyColumn(
             modifier = Modifier
                 .padding(top = 36.dp, start = 6.dp, end = 6.dp, bottom = 6.dp)
                 .fillMaxWidth(),
+            state = listState,
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             itemsIndexed(
