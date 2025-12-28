@@ -1,8 +1,12 @@
 package com.example.priomatrix
 
 import android.view.animation.GridLayoutAnimationController
+import androidx.compose.ui.graphics.Color
 import com.example.priomatrix.ui.Severity
 import com.example.priomatrix.ui.TaskStatus
+import com.example.priomatrix.ui.theme.TaskStatusCompletedColor
+import com.example.priomatrix.ui.theme.TaskStatusInProgressColor
+import com.example.priomatrix.ui.theme.TaskStatusPendingColor
 
 data class Task(
     val id: Int,
@@ -17,6 +21,7 @@ data class Task(
     val isCompleted: Boolean
         get() = status == TaskStatus.COMPLETED
 }
+
 
 // TODO : remove this list
 val list = listOf(
