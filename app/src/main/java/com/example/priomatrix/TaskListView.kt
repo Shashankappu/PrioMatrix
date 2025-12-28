@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,11 +36,12 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.example.priomatrix.ui.TaskStatus
 
 @Composable
 fun TaskListView(
     modifier: Modifier = Modifier,
-    tasks : List<Task>,
+    tasks: List<Task>,
     onDragStart: (Task, Offset) -> Unit,
     onDrag: (Offset) -> Unit,
     onDragEnd: () -> Unit
@@ -50,20 +54,17 @@ fun TaskListView(
         itemsIndexed(
             items = tasks,
             key = { _, task -> task.id }
-        ) { index, task ->
+        ) { _, task ->
             var itemRootOffset by remember { mutableStateOf(Offset.Zero) }
             TaskItem(
                 task = task,
                 modifier = Modifier
                     .height(80.dp)
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .border(width = 2.dp, Color.Gray, RoundedCornerShape(16.dp))
-                    .padding(16.dp)
+                    .padding(horizontal = 8.dp)
                     .pointerInput(task) {
                         detectDragGesturesAfterLongPress(
                             onDragStart = { localOffset ->
-                                // localOffset is the touch point inside the item
                                 val startPosition = itemRootOffset + localOffset
                                 onDragStart(task, startPosition)
                             },
@@ -90,45 +91,98 @@ fun TaskItem(
 ) {
     Row(
         modifier = modifier
-            .onGloballyPositioned { coords ->
-                onPositioned(coords.positionInRoot())
-            },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ){
+            .onGloballyPositioned { onPositioned(it.positionInRoot()) }
+            .clip(RoundedCornerShape(14.dp))
+            .background(Color(0xFFFFFBFA))
+            .border(1.dp, Color(0xFFE0E0E0), RoundedCornerShape(14.dp))
+            .padding(horizontal = 14.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        /* ---------- OWNER AVATAR ---------- */
         Box(
             modifier = Modifier
-                .fillMaxHeight()
-                .aspectRatio(1f)
-                .clip(RoundedCornerShape(8.dp))
-                .background(task.priority.color),
-            contentAlignment = Alignment.Center,
-        ){
-            if(task.isCompleted){
+                .size(32.dp)
+                .clip(RoundedCornerShape(50))
+                .background(
+                    if (task.owner.isBlank())
+                        Color(0xFFE0E0E0)
+                    else
+                        Color(0xFF90CAF9)
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = task.owner.firstOrNull()?.uppercase() ?: "–",
+                style = MaterialTheme.typography.labelLarge,
+                color = Color.White
+            )
+        }
+
+        Spacer(Modifier.width(12.dp))
+
+
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+
+            /* Title + Status */
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 Text(
-                    text = "✔",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Color.White,
+                    text = task.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color(0xFF212121),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(Color(0xFFF0F0F0))
+                        .padding(horizontal = 8.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = task.owner.ifBlank { "Unassigned" },
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color(0xFF616161)
+                    )
+                }
+                StatusDot(task.status)
+            }
+
+            /* Description — FULL WIDTH, no cropping */
+            if (task.description.isNotBlank()) {
+                Text(
+                    text = task.description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color(0xFF757575),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.Start
-        ) {
-            Text(
-                text = "${task.id} : ${task.title}",
-                style = MaterialTheme.typography.titleLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = task.description,
-                style = MaterialTheme.typography.bodyLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
     }
+}
+
+
+@Composable
+fun StatusDot(status: TaskStatus) {
+    val color = when (status) {
+        TaskStatus.PENDING -> Color(0xFFFFA000)
+        TaskStatus.IN_PROGRESS -> Color(0xFF29B6F6)
+        TaskStatus.COMPLETED -> Color(0xFF66BB6A)
+    }
+
+    Box(
+        modifier = Modifier
+            .size(8.dp)
+            .clip(RoundedCornerShape(4.dp))
+            .background(color)
+    )
 }

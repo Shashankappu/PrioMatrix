@@ -87,15 +87,12 @@ fun PriorityTaskListScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(tasks, key = { it.id }) { task ->
-                val borderColor = if(task.isCompleted) Color.Green else Color.Gray
                 TaskItem(
                     task = task,
                     modifier =  Modifier
                         .height(80.dp)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
-                        .border(width = 2.dp, borderColor, RoundedCornerShape(16.dp))
-                        .padding(16.dp)
+                        .padding(horizontal = 8.dp)
                 )
             }
         }

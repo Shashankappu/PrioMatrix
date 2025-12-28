@@ -1,13 +1,19 @@
 package com.example.priomatrix
 
+import com.example.priomatrix.ui.TaskStatus
+
 data class Task(
     val id: Int,
     val title: String,
     val description: String,
+    val owner: String = "",
     val priority: Priority,
     val createdAt : Long,
+    val status: TaskStatus = TaskStatus.PENDING
+){
     val isCompleted: Boolean
-)
+        get() = status == TaskStatus.COMPLETED
+}
 
 // TODO : remove this list
 val list = listOf(
@@ -15,71 +21,81 @@ val list = listOf(
         1, "Task 1",
         description = "Some Bug in Home Screen",
         priority = PRIORITY_NONE,
-        isCompleted = true,
-        createdAt = 0L
+        createdAt = 0L,
+        owner = "John Doe",
+        status = TaskStatus.PENDING
     ),
     Task(
         2, "Task 2",
         description = "Some Feature Implementation",
         priority = PRIORITY_NONE,
-        isCompleted = false,
-        createdAt = 1L
+        createdAt = 1L,
+        owner = "John Doe",
+        status = TaskStatus.COMPLETED
     ),
     Task(
         3, "Task 3",
         description = "Some Bug in Splash Screen",
         priority = PRIORITY_NONE,
-        isCompleted = false,
-        createdAt = 2L
+        createdAt = 2L,
+        owner = "King",
+        status = TaskStatus.PENDING
     ),
     Task(
         4, "Task 4",
         description = "Some Bug in Player Screen",
         priority = PRIORITY_NONE,
-        isCompleted = false,
-        createdAt = 3L
+        createdAt = 3L,
+        owner = "John Doe",
+        status = TaskStatus.PENDING
     ),
     Task(
         5, "Task 5",
         description = "Some Bug in Video",
         priority = PRIORITY_NONE,
-        isCompleted = true,
-        createdAt = 4L
+        createdAt = 4L,
+        owner = "John Doe",
+        status = TaskStatus.IN_PROGRESS
     ),
 
     Task(
         6, "Task 6",
         description = "Some Bug in Home Screen",
         priority = PRIORITY_NONE,
-        isCompleted = true,
-        createdAt = 5L
+        createdAt = 5L,
+        owner = "King",
+        status = TaskStatus.IN_PROGRESS
     ),
     Task(
         7, "Task 7",
         description = "Some Feature Implementation",
         priority = PRIORITY_NONE,
-        isCompleted = false,
-        createdAt = 6L
+        createdAt = 6L,
+        owner = "James",
+        status = TaskStatus.IN_PROGRESS
     ),
     Task(
         8, "Task 8",
         description = "Some Bug in Splash Screen",
         priority = PRIORITY_NONE,
-        isCompleted = false,
-        createdAt = 7L
+        createdAt = 7L,
+        owner = "John Doe",
+        status = TaskStatus.PENDING
     ),
     Task(
         9, "Task 9",
         description = "Some Bug in Player Screen",
         priority = PRIORITY_NONE,
-        isCompleted = false,
-        createdAt = 8L
+        createdAt = 8L,
+        owner = "James",
+        status = TaskStatus.PENDING
     ),
     Task(
         10, "Task 10",
         description = "Some Bug in Video",
         priority = PRIORITY_NONE,
-        isCompleted = true,
-        createdAt = 9L
+        createdAt = 9L,
+        owner = "James",
+        status = TaskStatus.COMPLETED
     ),
 )

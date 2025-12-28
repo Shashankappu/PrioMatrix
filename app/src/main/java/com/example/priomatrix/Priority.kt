@@ -1,11 +1,16 @@
 package com.example.priomatrix
 
+import android.view.animation.GridLayoutAnimationController.PRIORITY_NONE
 import androidx.compose.ui.graphics.Color
 import com.example.priomatrix.ui.theme.PriorityFourBg
 import com.example.priomatrix.ui.theme.PriorityNoneBg
 import com.example.priomatrix.ui.theme.PriorityOneBg
 import com.example.priomatrix.ui.theme.PriorityThreeBg
 import com.example.priomatrix.ui.theme.PriorityTwoBg
+import com.example.priomatrix.ui.theme.QuadrantFourBg
+import com.example.priomatrix.ui.theme.QuadrantOneBg
+import com.example.priomatrix.ui.theme.QuadrantThreeBg
+import com.example.priomatrix.ui.theme.QuadrantTwoBg
 
 data class Priority(
     val id: Int,
@@ -20,10 +25,21 @@ data class Priority(
                 3 -> PRIORITY_THREE
                 4 -> PRIORITY_FOUR
                 else -> PRIORITY_NONE
-            }
+            } as Priority
         }
     }
 }
+
+fun Priority.toQuadrantBg() : Color {
+    return when (this) {
+        PRIORITY_ONE -> QuadrantOneBg
+        PRIORITY_TWO -> QuadrantTwoBg
+        PRIORITY_THREE -> QuadrantThreeBg
+        PRIORITY_FOUR -> QuadrantFourBg
+        else -> Color.Gray
+    }
+}
+
 
 val PRIORITY_NONE = Priority(
     id = 0,
