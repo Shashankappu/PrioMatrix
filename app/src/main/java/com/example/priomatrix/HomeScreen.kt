@@ -1,5 +1,11 @@
 package com.example.priomatrix
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +23,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.priomatrix.ui.DragOverlay
+import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(
@@ -43,6 +51,21 @@ fun HomeScreen(
     val backlogTasks by taskViewModel.backlogTasks.collectAsState(emptyList())
     val matrixTasks by taskViewModel.matrixTasks.collectAsState()
     val dragState by taskViewModel.dragState.collectAsState()
+
+    var showEmptyBacklog by remember { mutableStateOf(true) }
+
+    LaunchedEffect(backlogTasks.isEmpty()) {
+        if (backlogTasks.isEmpty()) {
+            showEmptyBacklog = true
+            delay(2500) // 2.5 seconds
+            showEmptyBacklog = false
+        }
+    }
+
+    val matrixHeightFraction by animateFloatAsState(
+        targetValue = if (showEmptyBacklog || backlogTasks.isNotEmpty()) 0.55f else 0.85f,
+        label = "matrix-height"
+    )
 
     Box(
         modifier = modifier
@@ -88,7 +111,7 @@ fun HomeScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.55f)
+                    .fillMaxHeight(matrixHeightFraction)
                     .padding(horizontal = 12.dp)
                     .background(
                         Color(0xFF2B2B2B),
@@ -108,42 +131,65 @@ fun HomeScreen(
             }
 
             /* ---------- BACKLOG ---------- */
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(horizontal = 12.dp)
-                    .background(Color(0xFFF5F5F5), RoundedCornerShape(20.dp))
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+            AnimatedVisibility(
+                visible = showEmptyBacklog || backlogTasks.isNotEmpty(),
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
             ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .background(
+                            Color(0xFFF5F5F5),
+                            RoundedCornerShape(20.dp)
+                        )
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
 
-                Text(
-                    text = "Backlog",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color(0xFF424242)
-                )
-
-                if (backlogTasks.isEmpty()) {
-                    EmptyBacklogState(
-                        onImportCsv = onImportCsv,
-                        onImportExcel = onImportExcel,
-                        onUploadFile = onUploadFile
+                    Text(
+                        text = "Backlog",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color(0xFF424242)
                     )
-                } else {
-                    TaskListView(
-                        modifier = Modifier.fillMaxSize(),
-                        tasks = backlogTasks,
-                        onDragStart = { task, offset ->
-                            taskViewModel.startDrag(task, offset)
-                        },
-                        onDrag = { offset ->
-                            taskViewModel.updateDrag(offset)
-                        },
-                        onDragEnd = {
-                            taskViewModel.endDrag()
+
+                    if (backlogTasks.isEmpty()) {
+                        // EMPTY STATE (temporary)
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .alpha(0.7f),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("🗂️", style = MaterialTheme.typography.displayMedium)
+                            Text(
+                                "No pending tasks",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color(0xFF616161)
+                            )
+                            Text(
+                                "You're all caught up 👌",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color(0xFF9E9E9E)
+                            )
                         }
-                    )
+                    } else {
+                        TaskListView(
+                            modifier = Modifier.fillMaxSize(),
+                            tasks = backlogTasks,
+                            onDragStart = { task, offset ->
+                                taskViewModel.startDrag(task, offset)
+                            },
+                            onDrag = { offset ->
+                                taskViewModel.updateDrag(offset)
+                            },
+                            onDragEnd = {
+                                taskViewModel.endDrag()
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -209,11 +255,7 @@ fun HomeScreen(
 
 
 @Composable
-private fun EmptyBacklogState(
-    onImportCsv: () -> Unit,
-    onImportExcel: () -> Unit,
-    onUploadFile: () -> Unit
-) {
+private fun EmptyBacklogState() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -232,15 +274,6 @@ private fun EmptyBacklogState(
             style = MaterialTheme.typography.bodySmall,
             color = Color(0xFF9E9E9E)
         )
-
-        Row(
-            modifier = Modifier.padding(top = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            ImportChip("CSV", onImportCsv)
-            ImportChip("Excel", onImportExcel)
-            ImportChip("File", onUploadFile)
-        }
     }
 }
 
@@ -258,17 +291,4 @@ private fun FabMenuItem(
         style = MaterialTheme.typography.bodyMedium,
         color = Color(0xFF212121)
     )
-}
-
-
-@Composable
-private fun ImportChip(text: String, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .background(Color.White, RoundedCornerShape(20.dp))
-            .clickable { onClick() }
-            .padding(horizontal = 14.dp, vertical = 6.dp)
-    ) {
-        Text(text, style = MaterialTheme.typography.bodySmall)
-    }
 }
