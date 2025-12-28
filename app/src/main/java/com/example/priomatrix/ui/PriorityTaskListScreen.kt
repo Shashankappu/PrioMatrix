@@ -1,7 +1,6 @@
 package com.example.priomatrix.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,7 +23,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -40,6 +38,7 @@ fun PriorityTaskListScreen(
 ) {
     val matrixTasks by taskViewModel.matrixTasks.collectAsState()
     val priority = Priority.fromId(priorityId)
+
     val isFilterPopupOpen by taskViewModel.isFilterPopupOpen.collectAsState()
     val isSortPopupOpen by taskViewModel.isSortPopupOpen.collectAsState()
 
@@ -55,140 +54,139 @@ fun PriorityTaskListScreen(
         sortOption = sortOption
     )
 
-
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFFDFDFD))
     ) {
 
-        // Top bar
+        /* ---------- TOP BAR ---------- */
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .background(priority.color.copy(alpha = 0.25f))
+                .padding(horizontal = 16.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = priority.name,
                 style = MaterialTheme.typography.titleLarge,
+                color = Color(0xFF212121),
                 modifier = Modifier.weight(1f)
             )
             Text(
                 text = "Back",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color(0xFF546E7A),
                 modifier = Modifier.clickable { onBack() }
             )
         }
-        // TaskListView
+
+        /* ---------- TASK LIST ---------- */
         LazyColumn(
             modifier = Modifier
-                .fillMaxHeight(0.9f)
-                .padding(16.dp),
+                .weight(1f)
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(tasks, key = { it.id }) { task ->
                 TaskItem(
                     task = task,
-                    modifier =  Modifier
-                        .height(80.dp)
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
+                        .height(82.dp)
                 )
             }
         }
 
-        // Bottom QuickAction bar
+        /* ---------- BOTTOM QUICK ACTION BAR ---------- */
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp)
-                .background(Color.White)
-                .padding(horizontal = 16.dp),
+                .background(Color(0xFFF5F5F5))
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            QuickActionItem(
+            QuickActionCard(
                 action = QuickActionItem.SortBy,
                 description = sortOption.title,
-                modifier = Modifier
-                        . clickable {
-                    taskViewModel.setSortPopupStateOpen()
-                },
-            )
-            VerticalDivider(modifier = Modifier
-                .fillMaxHeight()
-                .width(1.dp)
-                .background(Color.White))
-            QuickActionItem(
+                accent = priority.color,
+                modifier = Modifier.weight(1f)
+            ) {
+                taskViewModel.setSortPopupStateOpen()
+            }
+
+            QuickActionCard(
                 action = QuickActionItem.FilterBy,
-                modifier = Modifier
-                    .clickable {
-                        taskViewModel.setFilterPopupStateOpen()
-                    },
-            )
+                description = "${completionFilter.title} | ${nameFilter.title}",
+                accent = priority.color,
+                modifier = Modifier.weight(1f)
+            ) {
+                taskViewModel.setFilterPopupStateOpen()
+            }
         }
     }
+
+    /* ---------- POPUPS ---------- */
     if (isSortPopupOpen) {
         SortByPopup(
             selectedOption = sortOption,
-            onOptionSelected = {
-                taskViewModel.setSortOption(it)
-            },
-            onDismiss = {
-                taskViewModel.setSortPopupStateClose()
-            }
+            onOptionSelected = { taskViewModel.setSortOption(it) },
+            onDismiss = { taskViewModel.setSortPopupStateClose() }
         )
     }
+
     if (isFilterPopupOpen) {
         FilterPopUp(
             selectedCompletion = completionFilter,
             selectedName = nameFilter,
-            onCompletionSelected = {
-                taskViewModel.setCompletionFilter(it)
-            },
-            onNameSelected = {
-                taskViewModel.setNameFilter(it)
-            },
-            onDismiss = {
-                taskViewModel.setFilterPopupStateClose()
-            }
+            onCompletionSelected = { taskViewModel.setCompletionFilter(it) },
+            onNameSelected = { taskViewModel.setNameFilter(it) },
+            onDismiss = { taskViewModel.setFilterPopupStateClose() }
         )
     }
 }
 
 @Composable
-fun QuickActionItem(
-    modifier: Modifier = Modifier,
+fun QuickActionCard(
     action: QuickActionItem,
-    description: String = ""
+    description: String = "",
+    accent: Color,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     Row(
-        modifier = modifier.fillMaxHeight(),
+        modifier = modifier
+            .height(56.dp)
+            .background(
+                color = Color.White,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .clickable { onClick() }
+            .padding(horizontal = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Icon(
             painter = painterResource(action.icon),
             contentDescription = null,
-            tint = Color.Black,
-            modifier = Modifier.padding(end = 8.dp)
+            tint = accent
         )
+
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = action.name,
-                color = Color.Black,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color(0xFF212121)
             )
-            if(description.isNotEmpty()) {
-                Text(
-                    text = description,
-                    color = Color.Black,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color(0xFF757575)
+            )
         }
     }
 }
