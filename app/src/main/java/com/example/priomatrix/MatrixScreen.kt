@@ -1,6 +1,7 @@
 package com.example.priomatrix
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,7 +32,10 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.example.priomatrix.ui.TaskStatus
+import com.example.priomatrix.ui.indicatorColor
 import com.example.priomatrix.ui.theme.TaskBgColor
 
 @Composable
@@ -169,25 +175,62 @@ fun MatrixCell(
                 items = tasks,
                 key = { _, task -> task.id }
             ) { _, task ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(44.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(TaskBgColor)
-                        .combinedClickable(
-                            onClick = { onQuadrantClick() },
-                            onDoubleClick = { onTaskRollback(task) }
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = task.id.toString(),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF212121)
-                    )
-                }
+                MatrixTaskItem(
+                    task = task,
+                    onClick = { onQuadrantClick()},
+                    onDoubleClick = { onTaskRollback(task) }
+                )
             }
+        }
+    }
+}
+
+
+@Composable
+private fun MatrixTaskItem(
+    task: Task,
+    onClick: () -> Unit,
+    onDoubleClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(42.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color(0xFFFFFBFA))
+            .border(
+                width = 1.dp,
+                color = Color(0xFFE0E0E0),
+                shape = RoundedCornerShape(10.dp)
+            )
+            .combinedClickable(
+                onClick = onClick,
+                onDoubleClick = onDoubleClick
+            )
+            .padding(horizontal = 10.dp),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+
+            // Status dot
+            Box(
+                modifier = Modifier
+                    .size(8.dp)
+                    .clip(CircleShape)
+                    .background(task.status.indicatorColor())
+            )
+
+            // Title
+            Text(
+                text = task.title,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color(0xFF212121),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }

@@ -44,30 +44,30 @@ fun Priority.toQuadrantBg() : Color {
 val PRIORITY_NONE = Priority(
     id = 0,
     name = "Unassigned",
-    color = PriorityNoneBg // or existing gray mapping
+    color = PriorityNoneBg
 )
 
 val PRIORITY_ONE = Priority(
     id = 1,
-    name = "Do Now",
+    name = "Urgent & Important",
     color = PriorityOneBg
 )
 
 val PRIORITY_TWO = Priority(
     id = 2,
-    name = "Schedule",
+    name = "Urgent, Not Important",
     color = PriorityTwoBg
 )
 
 val PRIORITY_THREE = Priority(
     id = 3,
-    name = "Delegate",
+    name = "Important, Not Urgent",
     color = PriorityThreeBg
 )
 
 val PRIORITY_FOUR = Priority(
     id = 4,
-    name = "Eliminate",
+    name = "Low Importance",
     color = PriorityFourBg
 )
 

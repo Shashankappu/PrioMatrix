@@ -37,6 +37,7 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.priomatrix.ui.TaskStatus
+import com.example.priomatrix.ui.indicatorColor
 
 @Composable
 fun TaskListView(
@@ -173,16 +174,10 @@ fun TaskItem(
 
 @Composable
 fun StatusDot(status: TaskStatus) {
-    val color = when (status) {
-        TaskStatus.PENDING -> Color(0xFFFFA000)
-        TaskStatus.IN_PROGRESS -> Color(0xFF29B6F6)
-        TaskStatus.COMPLETED -> Color(0xFF66BB6A)
-    }
-
     Box(
         modifier = Modifier
             .size(8.dp)
             .clip(RoundedCornerShape(4.dp))
-            .background(color)
+            .background(status.indicatorColor())
     )
 }

@@ -22,3 +22,23 @@ val QuadrantThreeBg = Color(0xFFE3F2FD)     // soft blue
 val QuadrantFourBg = Color(0xFFE8F5E9)      // soft green
 
 val TaskBgColor     = Color.White
+
+// Background for compact matrix task item
+val MatrixTaskItemBg = Color(0xFFFFFBFA)
+
+// Border for compact matrix task item
+val MatrixTaskItemBorder = Color(0xFFE0E0E0)
+
+// Primary text color inside matrix task
+val MatrixTaskItemText = Color(0xFF212121)
+
+/* ---------- Task Status Colors ---------- */
+
+// Pending → amber (attention but not alarming)
+val TaskStatusPendingColor = Color(0xFFFFA000)
+
+// In progress → calm blue
+val TaskStatusInProgressColor = Color(0xFF29B6F6)
+
+// Completed → positive green
+val TaskStatusCompletedColor = Color(0xFF66BB6A)
