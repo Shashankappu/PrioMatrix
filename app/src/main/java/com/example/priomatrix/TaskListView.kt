@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.example.priomatrix.ui.IconTint
 import com.example.priomatrix.ui.Severity
 import com.example.priomatrix.ui.indicatorIcon
+import com.example.priomatrix.ui.theme.TaskStatusPendingColor
 
 @Composable
 fun TaskListView(
@@ -94,6 +95,7 @@ fun TaskItem(
     task: Task,
     modifier: Modifier = Modifier,
     onItemClicked: (Int) -> Unit,
+    borderColor: Color = TaskStatusPendingColor,
     onPositioned: (Offset) -> Unit = {}
 ) {
     Row(
@@ -101,7 +103,7 @@ fun TaskItem(
             .onGloballyPositioned { onPositioned(it.positionInRoot()) }
             .clip(RoundedCornerShape(14.dp))
             .background(Color(0xFFFFFBFA))
-            .border(1.dp, Color(0xFFE0E0E0), RoundedCornerShape(14.dp))
+            .border(1.dp,borderColor, RoundedCornerShape(14.dp))
             .padding(horizontal = 14.dp, vertical = 10.dp)
             .clickable{
                 onItemClicked(task.id)

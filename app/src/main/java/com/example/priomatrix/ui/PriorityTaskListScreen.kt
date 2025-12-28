@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -102,6 +101,7 @@ fun PriorityTaskListScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(82.dp),
+                        borderColor = task.status.toIndicatorColor(),
                         onItemClicked = onItemClicked
                     )
                 }
