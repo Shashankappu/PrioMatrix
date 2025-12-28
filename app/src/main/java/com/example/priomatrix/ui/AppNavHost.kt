@@ -44,7 +44,7 @@ fun  AppNavHost(
         ) { backStackEntry ->
             val priorityId = backStackEntry.arguments!!.getInt("priorityId")
 
-            QuadrantTasksScreen(
+            PriorityTaskListScreen(
                 priorityId = priorityId,
                 taskViewModel = taskViewModel,
                 onBack = { navController.popBackStack() }
