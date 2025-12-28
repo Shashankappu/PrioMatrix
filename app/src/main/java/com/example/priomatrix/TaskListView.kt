@@ -2,6 +2,7 @@ package com.example.priomatrix
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,7 +47,8 @@ fun TaskListView(
     tasks: List<Task>,
     onDragStart: (Task, Offset) -> Unit,
     onDrag: (Offset) -> Unit,
-    onDragEnd: () -> Unit
+    onDragEnd: () -> Unit,
+    onItemClicked : (Int) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
@@ -80,7 +82,8 @@ fun TaskListView(
                             onDragCancel = onDragEnd
                         )
                     },
-                onPositioned = { itemRootOffset = it }
+                onPositioned = { itemRootOffset = it },
+                onItemClicked = onItemClicked
             )
         }
     }
@@ -90,6 +93,7 @@ fun TaskListView(
 fun TaskItem(
     task: Task,
     modifier: Modifier = Modifier,
+    onItemClicked: (Int) -> Unit,
     onPositioned: (Offset) -> Unit = {}
 ) {
     Row(
@@ -98,7 +102,10 @@ fun TaskItem(
             .clip(RoundedCornerShape(14.dp))
             .background(Color(0xFFFFFBFA))
             .border(1.dp, Color(0xFFE0E0E0), RoundedCornerShape(14.dp))
-            .padding(horizontal = 14.dp, vertical = 10.dp),
+            .padding(horizontal = 14.dp, vertical = 10.dp)
+            .clickable{
+                onItemClicked(task.id)
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
 

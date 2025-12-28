@@ -4,13 +4,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.ViewModel
 import com.example.priomatrix.ui.FilterOption
 import com.example.priomatrix.ui.SortOption
-import com.example.priomatrix.ui.TaskStatus
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlin.collections.orEmpty
-import kotlin.collections.sortedBy
-import kotlin.collections.sortedByDescending
 
 class TaskViewModel : ViewModel() {
 
@@ -168,5 +163,14 @@ class TaskViewModel : ViewModel() {
         }
     }
 
+    fun getTaskById(taskId: Int): Task? {
+        // Search in backlog tasks
+        backlogTasks.value.find { it.id == taskId }?.let { return it }
+
+        // Search in matrix tasks
+        matrixTasks.value.values.flatten().find { it.id == taskId }?.let { return it }
+
+        return null
+    }
 
 }

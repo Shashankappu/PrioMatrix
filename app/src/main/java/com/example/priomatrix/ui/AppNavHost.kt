@@ -33,6 +33,9 @@ fun  AppNavHost(
                         Screen.Quadrant.createRoute(priority.id)
                     )
                 },
+                onItemClicked = { taskId ->
+                    navController.navigate(Screen.TaskDetails.createRoute(taskId))
+                }
             )
         }
 
@@ -47,6 +50,22 @@ fun  AppNavHost(
             PriorityTaskListScreen(
                 priorityId = priorityId,
                 taskViewModel = taskViewModel,
+                onBack = { navController.popBackStack() },
+                onItemClicked = { taskId ->
+                    navController.navigate(Screen.TaskDetails.createRoute(taskId))
+                }
+            )
+        }
+
+
+        composable(
+            route = Screen.TaskDetails.route,
+            arguments = listOf(navArgument("taskId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val taskId = backStackEntry.arguments!!.getInt("taskId")
+            val task = taskViewModel.getTaskById(taskId)
+            TaskDetailsScreen(
+                task = task!!,
                 onBack = { navController.popBackStack() }
             )
         }

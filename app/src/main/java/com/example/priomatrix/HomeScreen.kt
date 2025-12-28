@@ -1,5 +1,6 @@
 package com.example.priomatrix
 
+import android.widget.AdapterView
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
@@ -43,6 +44,7 @@ fun HomeScreen(
     onQuadrantClick: (Priority) -> Unit,
     taskViewModel: TaskViewModel,
     modifier: Modifier = Modifier,
+    onItemClicked : (Int) -> Unit,
     onAddTaskClick: () -> Unit = {},
     onImportCsv: () -> Unit = {},
     onImportExcel: () -> Unit = {},
@@ -187,7 +189,8 @@ fun HomeScreen(
                             },
                             onDragEnd = {
                                 taskViewModel.endDrag()
-                            }
+                            },
+                            onItemClicked = onItemClicked
                         )
                     }
                 }
