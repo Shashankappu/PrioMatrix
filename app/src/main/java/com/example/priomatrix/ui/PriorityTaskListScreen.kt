@@ -34,6 +34,7 @@ import com.example.priomatrix.TaskViewModel
 fun PriorityTaskListScreen(
     priorityId: Int,
     taskViewModel: TaskViewModel,
+    onItemClicked: (Int) -> Unit,
     onBack: () -> Unit
 ) {
     val matrixTasks by taskViewModel.matrixTasks.collectAsState()
@@ -100,7 +101,8 @@ fun PriorityTaskListScreen(
                         task = task,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(82.dp)
+                            .height(82.dp),
+                        onItemClicked = onItemClicked
                     )
                 }
             }
