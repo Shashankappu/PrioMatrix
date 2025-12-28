@@ -57,7 +57,7 @@ fun HomeScreen(
             MatrixScreen(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.45f),
+                    .fillMaxHeight(0.6f),
                 dragPosition = dragState.position,
                 isDragging = dragState.isDragging,
                 matrixTasks = matrixTasks,

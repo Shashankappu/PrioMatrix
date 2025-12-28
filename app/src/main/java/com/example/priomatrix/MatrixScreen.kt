@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -36,6 +37,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.priomatrix.ui.theme.CellBorderColor
+import com.example.priomatrix.ui.theme.PriorityFourBg
+import com.example.priomatrix.ui.theme.PriorityOneBg
+import com.example.priomatrix.ui.theme.PriorityThreeBg
+import com.example.priomatrix.ui.theme.PriorityTwoBg
+import com.example.priomatrix.ui.theme.TaskBgColor
 
 @Composable
 fun MatrixScreen(
@@ -139,54 +146,80 @@ fun MatrixCell(
     onTaskRollback: (Task) -> Unit,
     onQuadrantClick: () -> Unit
 ) {
+    val bgColor = when (priority) {
+        PRIORITY_ONE -> PriorityOneBg
+        PRIORITY_TWO -> PriorityTwoBg
+        PRIORITY_THREE -> PriorityThreeBg
+        PRIORITY_FOUR -> PriorityFourBg
+        PRIORITY_NONE -> Color.Gray
+        else -> {Color.Gray}
+    }
+
     Box(
         modifier = modifier
-            .background(priority.color)
+            .padding(6.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .background(bgColor)
+            .border(
+                1.5.dp,
+                Color.Black.copy(alpha = 0.15f),
+                RoundedCornerShape(20.dp)
+            )
             .onGloballyPositioned { coords ->
                 onBoundsReady(priority to coords.boundsInRoot())
-            },
-        contentAlignment = Alignment.Center
+            }
     ) {
+
+        // 🔹 Corner label
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .rotate(-45f)
-                .clickable{
-                    onQuadrantClick()
-                },
-            contentAlignment = Alignment.Center
+                .align(Alignment.TopStart)
+                .padding(10.dp)
+                .clip(RoundedCornerShape(50))
+                .background(Color.White.copy(alpha = 0.9f))
+                .clickable { onQuadrantClick() }
+                .padding(horizontal = 12.dp, vertical = 6.dp)
         ) {
             Text(
                 text = priority.name,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Black,
-                textAlign = TextAlign.Center
+                style = MaterialTheme.typography.labelMedium,
+                color = Color.Black
             )
         }
+
+        // 🔹 Task list
         LazyColumn(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier
+                .padding(top = 44.dp, start = 10.dp, end = 10.dp, bottom = 10.dp)
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             itemsIndexed(
                 items = tasks,
                 key = { _, task -> task.id }
-            ) { index, task ->
+            ) { _, task ->
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(40.dp)
-                        .background(Color.White.copy(0.3f), RoundedCornerShape(8.dp))
+                        .height(42.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color.White)
+                        .border(
+                            1.dp,
+                            Color.Black.copy(alpha = 0.08f),
+                            RoundedCornerShape(12.dp)
+                        )
                         .combinedClickable(
-                            onClick = {
-                                onQuadrantClick()
-                            },
-                            onDoubleClick = {
-                                onTaskRollback(task)
-                            }
+                            onClick = { onQuadrantClick() },
+                            onDoubleClick = { onTaskRollback(task) }
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(task.id.toString(), color = Color.Black)
+                    Text(
+                        text = task.id.toString(),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Black
+                    )
                 }
             }
         }
