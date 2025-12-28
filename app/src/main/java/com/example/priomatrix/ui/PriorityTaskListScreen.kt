@@ -83,19 +83,26 @@ fun PriorityTaskListScreen(
         }
 
         /* ---------- TASK LIST ---------- */
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(tasks, key = { it.id }) { task ->
-                TaskItem(
-                    task = task,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(82.dp)
-                )
+        if (tasks.isEmpty()) {
+            EmptyTaskListView(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp))
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(tasks, key = { it.id }) { task ->
+                    TaskItem(
+                        task = task,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(82.dp)
+                    )
+                }
             }
         }
 
@@ -144,6 +151,30 @@ fun PriorityTaskListScreen(
             onCompletionSelected = { taskViewModel.setCompletionFilter(it) },
             onNameSelected = { taskViewModel.setNameFilter(it) },
             onDismiss = { taskViewModel.setFilterPopupStateClose() }
+        )
+    }
+}
+
+@Composable
+fun EmptyTaskListView(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "🗂️",
+            style = MaterialTheme.typography.displayMedium
+        )
+        Text(
+            text = "No tasks here",
+            style = MaterialTheme.typography.titleMedium,
+            color = Color(0xFF616161)
+        )
+        Text(
+            text = "All caught up! 🙌",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color(0xFF9E9E9E)
         )
     }
 }
