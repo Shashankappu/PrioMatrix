@@ -35,7 +35,7 @@ val MatrixTaskItemText = Color(0xFF212121)
 /* ---------- Task Status Colors ---------- */
 
 // Pending → amber (attention but not alarming)
-val TaskStatusPendingColor = Color(0xFFFFA000)
+val TaskSeverityBlockerColor = Color(0xFFFFA000)
 
 // In progress → calm blue
 val TaskStatusInProgressColor = Color(0xFF29B6F6)
