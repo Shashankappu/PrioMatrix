@@ -101,13 +101,14 @@ class TaskViewModel : ViewModel() {
         _backlogTasks.value =
             _backlogTasks.value.filterNot { it.id == dragged.id }
 
-        // add to matrix
+        // add to matrix (newest first)
         _matrixTasks.value =
             _matrixTasks.value.toMutableMap().apply {
-                val updated = (this[priority] ?: emptyList()) +
-                        dragged.copy(priority = priority)
+                val updated =
+                    listOf(dragged.copy(priority = priority)) +
+                            (this[priority] ?: emptyList())
                 this[priority] = updated
-            }.toMap() // 🔥 FORCE NEW REF
+            }.toMap()
 
         _dragState.value = DragState()
     }
